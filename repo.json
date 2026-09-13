@@ -3,7 +3,7 @@
     "Author": "Anomaly",
     "Name": "Greeter",
     "InternalName": "Greeter",
-    "AssemblyVersion": "1.1.0.0",
+    "AssemblyVersion": "1.1.1.0",
     "Description": "Automatically greets newly arrived guests inside one configured FFXIV house. Includes exact-house matching, session duplicate protection, guest rules, customizable templates, and safely paced messages.",
     "Punchline": "Automatically greet guests entering your venue.",
     "Changelog": "Added a Home World dropdown, private /tell greetings, Clear Activity Log, a new repository icon, and fixed deleted greetings returning after reload.",
@@ -14,13 +14,13 @@
       "greeting"
     ],
     "RepoUrl": "https://github.com/anomalousgamer/greeter",
-    "IconUrl": "https://raw.githubusercontent.com/anomalousgamer/greeter/main/icon.png",
+    "IconUrl": "https://raw.githubusercontent.com/anomalousgamer/greeter/master/icon.png",
     "ApplicableVersion": "any",
     "DalamudApiLevel": 15,
     "IsHide": false,
     "IsTestingExclusive": false,
-    "DownloadLinkInstall": "https://github.com/anomalousgamer/greeter/releases/download/V1.1.0.0/latest.zip",
-    "DownloadLinkUpdate": "https://github.com/anomalousgamer/greeter/releases/download/V1.1.0.0/latest.zip",
+    "DownloadLinkInstall": "https://github.com/anomalousgamer/greeter/releases/download/V1.1.1.0/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/anomalousgamer/greeter/releases/download/V1.1.1.0/latest.zip",
     "LastUpdate": 1789324804
   }
 ]
