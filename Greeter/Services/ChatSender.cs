@@ -11,7 +11,11 @@ public sealed unsafe class ChatSender(IPluginLog log)
 {
     private const int MaximumUtf8Bytes = 450;
 
-    public bool TrySend(GreetingChannel channel, string message, out string error)
+    public bool TrySend(
+        GreetingChannel channel,
+        string message,
+        PlayerKey? recipient,
+        out string error)
     {
         error = string.Empty;
         var clean = Sanitize(message);
@@ -21,7 +25,15 @@ public sealed unsafe class ChatSender(IPluginLog log)
             return false;
         }
 
-        var command = $"{GetCommand(channel)} {clean}";
+        if (channel == GreetingChannel.Tell && recipient is not { IsUsable: true })
+        {
+            error = "A valid character name and Home World are required for /tell.";
+            return false;
+        }
+
+        var command = channel == GreetingChannel.Tell
+            ? $"/tell {recipient!.Value.Name}@{recipient.Value.World} {clean}"
+            : $"{GetCommand(channel)} {clean}";
         command = TruncateUtf8(command, MaximumUtf8Bytes);
 
         try

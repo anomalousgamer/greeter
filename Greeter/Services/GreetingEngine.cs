@@ -140,7 +140,10 @@ public sealed class GreetingEngine : IDisposable
             return false;
         }
 
-        var sent = chatSender.TrySend(configuration.GreetingChannel, message, out error);
+        var recipient = configuration.GreetingChannel == GreetingChannel.Tell
+            ? GetLocalPlayerKey()
+            : player;
+        var sent = chatSender.TrySend(configuration.GreetingChannel, message, recipient, out error);
         if (sent)
         {
             AddActivity($"Sent a manual test greeting: {message}");
@@ -150,6 +153,11 @@ public sealed class GreetingEngine : IDisposable
     }
 
     public string? PreviewGreeting(PlayerKey player) => RenderGreeting(player);
+
+    public void ClearActivity()
+    {
+        activity.Clear();
+    }
 
     public void ResetVenueTracking(string reason)
     {
@@ -384,7 +392,7 @@ public sealed class GreetingEngine : IDisposable
             return;
         }
 
-        if (!chatSender.TrySend(configuration.GreetingChannel, message, out var error))
+        if (!chatSender.TrySend(configuration.GreetingChannel, message, pending.Player, out var error))
         {
             pending.Attempts++;
             if (pending.Attempts >= 3)

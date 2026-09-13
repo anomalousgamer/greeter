@@ -20,6 +20,7 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
     [PluginService] internal static IPlayerState PlayerState { get; private set; } = null!;
     [PluginService] internal static IObjectTable ObjectTable { get; private set; } = null!;
+    [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
     [PluginService] internal static IContextMenu ContextMenu { get; private set; } = null!;
     [PluginService] internal static IChatGui ChatGui { get; private set; } = null!;
     [PluginService] internal static IPluginLog Log { get; private set; } = null!;
@@ -27,6 +28,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly HousingService housing;
     private readonly RuleManager rules;
     private readonly ChatSender chatSender;
+    private readonly WorldListService worldList;
     private readonly GreetingEngine engine;
     private readonly ContextMenuService contextMenuService;
     private readonly MainWindow mainWindow;
@@ -39,6 +41,7 @@ public sealed class Plugin : IDalamudPlugin
         housing = new HousingService();
         rules = new RuleManager(Configuration);
         chatSender = new ChatSender(Log);
+        worldList = new WorldListService(DataManager, Log);
         engine = new GreetingEngine(
             Configuration,
             housing,
@@ -52,7 +55,7 @@ public sealed class Plugin : IDalamudPlugin
             Log);
         contextMenuService = new ContextMenuService(ContextMenu, ChatGui, rules, engine);
 
-        mainWindow = new MainWindow(this, Configuration, housing, rules, engine);
+        mainWindow = new MainWindow(this, Configuration, housing, rules, worldList, engine);
         WindowSystem.AddWindow(mainWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
@@ -71,7 +74,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
         PluginInterface.UiBuilder.OpenConfigUi += OpenUi;
         PluginInterface.UiBuilder.OpenMainUi += OpenUi;
-        Log.Information("Greeter 1.0.0.0 loaded.");
+        Log.Information("Greeter 1.0.1.0 loaded.");
     }
 
     public Configuration Configuration { get; }
@@ -79,6 +82,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Dispose()
     {
+        Configuration.Save();
         PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
         PluginInterface.UiBuilder.OpenConfigUi -= OpenUi;
         PluginInterface.UiBuilder.OpenMainUi -= OpenUi;

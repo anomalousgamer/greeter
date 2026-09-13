@@ -14,6 +14,7 @@ public sealed class MainWindow : Window, IDisposable
     private readonly Configuration configuration;
     private readonly HousingService housing;
     private readonly RuleManager rules;
+    private readonly WorldListService worldList;
     private readonly GreetingEngine engine;
 
     private string manualName = string.Empty;
@@ -25,6 +26,7 @@ public sealed class MainWindow : Window, IDisposable
         Configuration configuration,
         HousingService housing,
         RuleManager rules,
+        WorldListService worldList,
         GreetingEngine engine)
         : base("Greeter###GreeterMainWindow")
     {
@@ -32,6 +34,7 @@ public sealed class MainWindow : Window, IDisposable
         this.configuration = configuration;
         this.housing = housing;
         this.rules = rules;
+        this.worldList = worldList;
         this.engine = engine;
 
         Size = new Vector2(760, 700);
@@ -152,7 +155,7 @@ public sealed class MainWindow : Window, IDisposable
 
         ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0.65f, 0.25f, 1f));
         ImGui.TextWrapped(
-            "Automatic greetings send real game chat messages. No automation can be guaranteed safe from game enforcement; use it at your own risk.");
+            "Remember, if if she doesn't say it enough - Ima loves you ♥");
         ImGui.PopStyleColor();
 
         var greetExisting = configuration.GreetPlayersPresentOnActivation;
@@ -295,8 +298,7 @@ public sealed class MainWindow : Window, IDisposable
 
         ImGui.SetNextItemWidth(260);
         ImGui.InputText("Character name", ref manualName, 80);
-        ImGui.SetNextItemWidth(200);
-        ImGui.InputText("Home World", ref manualWorld, 40);
+        DrawWorldPicker();
 
         var player = new PlayerKey(manualName, manualWorld);
         if (ImGui.Button("Add to Always Greet") && rules.AddAlways(player))
@@ -367,6 +369,12 @@ public sealed class MainWindow : Window, IDisposable
 
         ImGui.SameLine();
         ImGui.TextDisabled($"{engine.SessionGreetedCount} recorded");
+
+        if (ImGui.Button("Clear Activity Log"))
+        {
+            engine.ClearActivity();
+        }
+
         ImGui.Separator();
 
         if (engine.RecentActivity.Count == 0)
@@ -381,6 +389,46 @@ public sealed class MainWindow : Window, IDisposable
             ImGui.SameLine();
             ImGui.TextWrapped(item.Message);
         }
+    }
+
+    private void DrawWorldPicker()
+    {
+        ImGui.SetNextItemWidth(260);
+        var preview = string.IsNullOrWhiteSpace(manualWorld)
+            ? "Select a Home World..."
+            : manualWorld;
+
+        if (!ImGui.BeginCombo("Home World", preview))
+        {
+            return;
+        }
+
+        if (worldList.Worlds.Count == 0)
+        {
+            ImGui.TextDisabled("World list unavailable.");
+            if (ImGui.Selectable("Reload world list"))
+            {
+                worldList.Reload();
+            }
+        }
+        else
+        {
+            foreach (var world in worldList.Worlds)
+            {
+                var selected = string.Equals(manualWorld, world.Name, StringComparison.OrdinalIgnoreCase);
+                if (ImGui.Selectable(world.DisplayName, selected))
+                {
+                    manualWorld = world.Name;
+                }
+
+                if (selected)
+                {
+                    ImGui.SetItemDefaultFocus();
+                }
+            }
+        }
+
+        ImGui.EndCombo();
     }
 
     private void DrawIntSetting(string label, int current, int minimum, int maximum, Action<int> setter)

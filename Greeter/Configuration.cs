@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 using Greeter.Models;
+using Newtonsoft.Json;
 
 namespace Greeter;
 
@@ -27,19 +28,24 @@ public sealed class Configuration : IPluginConfiguration
     public int MaximumGreetingDelaySeconds { get; set; } = 7;
     public int MaximumQueueAgeSeconds { get; set; } = 90;
 
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public List<GreetingTemplate> GreetingTemplates { get; set; } =
     [
         new GreetingTemplate("Welcome to {venue}, {first}!"),
         new GreetingTemplate("Hello {first}! Welcome to {venue}."),
     ];
 
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public List<CharacterRuleEntry> AlwaysGreet { get; set; } = [];
+
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public List<CharacterRuleEntry> NeverGreet { get; set; } = [];
 
     // Runtime session data is persisted only so a Dalamud plugin reload does not
     // cause duplicate greetings during the same running FFXIV session.
     public string RuntimeSessionMarker { get; set; } = string.Empty;
     public string RuntimeCharacterKey { get; set; } = string.Empty;
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public List<string> RuntimeGreetedKeys { get; set; } = [];
 
     [NonSerialized]
@@ -66,10 +72,6 @@ public sealed class Configuration : IPluginConfiguration
         NeverGreet ??= [];
         RuntimeGreetedKeys ??= [];
 
-        if (GreetingTemplates.Count == 0)
-        {
-            GreetingTemplates.Add(new GreetingTemplate("Welcome to {venue}, {first}!"));
-        }
     }
 
     public void Save()
