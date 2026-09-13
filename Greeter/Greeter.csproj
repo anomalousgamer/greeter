@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+  <PropertyGroup>
+    <Version>1.0.0.0</Version>
+    <AssemblyName>Greeter</AssemblyName>
+    <RootNamespace>Greeter</RootNamespace>
+    <Author>Anomaly</Author>
+    <Name>Greeter</Name>
+    <Punchline>Automatically greets guests entering your configured venue.</Punchline>
+    <Description>Automatically greets newly arrived guests inside one configured FFXIV house. Includes session duplicate protection, Always Greet and Never Greet lists, customizable templates, arrival confirmation, and a safely paced message queue.</Description>
+    <Tags>social;housing;venue;greeting</Tags>
+    <RepoUrl>https://github.com/anomalousgamer/greeter</RepoUrl>
+  </PropertyGroup>
+</Project>
+
